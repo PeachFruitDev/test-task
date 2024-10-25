@@ -1,10 +1,8 @@
 import org.junit.jupiter.api.Test;
-import test.interview.model.Employee;
 import test.interview.model.parser.EmployeeParser;
 import test.interview.model.parser.ParserException;
 
-import java.math.BigDecimal;
-import java.util.Collections;
+import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,42 +12,71 @@ public class EmployeeParserTest {
     private final EmployeeParser parser = new EmployeeParser();
 
     @Test
-    public void parseTest_success() {
-        var employees = parser.parse("parseTest_success.csv");
-        assertNotNull(employees);
-        assertEquals(employees.size(), 2);
-        Employee subordinate = new Employee(2, "Joe2", "Doe2", BigDecimal.valueOf(11), null);
-        assertEquals(employees.get(1), new Employee(1, "Joe", "Doe", BigDecimal.valueOf(10), Collections.singletonList(subordinate)));
-        assertEquals(employees.get(2), subordinate);
+    public void parserTest_success() {
+        var ceo = parser.parse(new File("src/test/resources/parserTest_success.csv"));
+        assertNotNull(ceo);
+        assertEquals(ceo.getId(), 1);
+        assertEquals(ceo.getFirstName(), "Joe");
+        assertEquals(ceo.getLastName(), "Doe");
+        assertNull(ceo.getManagerId());
+        assertEquals(ceo.getSubordinates().size(), 1);
+        assertEquals(ceo.getSubordinates().get(0).getId(), 2);
+        assertEquals(ceo.getSubordinates().get(0).getFirstName(), "Joe2");
+        assertEquals(ceo.getSubordinates().get(0).getLastName(), "Doe2");
+        assertEquals(ceo.getSubordinates().get(0).getManagerId(), 1);
+        assertEquals(ceo.getSubordinates().get(0).getSubordinates().size(), 0);
     }
 
     @Test
-    public void parseTest_twoCEO_fail() {
-        var e = assertThrows(ParserException.class, () -> parser.parse("parseTest_twoCEO_fail.csv"));
-        assertEquals(e.getMessage(), "There should be only one CEO");
+    public void parserTest_twoCEO_fail() {
+        var e = assertThrows(ParserException.class, () -> parser.parse(new File("src/test/resources/parserTest_twoCEO_fail.csv")));
+        assertEquals(e.getErrors().size(), 1);
+        assertEquals(e.getErrors().get(0), "There should be only one CEO at 4");
     }
 
     @Test
-    public void parseTest_sameID_fail() {
-        var e = assertThrows(ParserException.class, () -> parser.parse("parseTest_sameID_fail.csv"));
-        assertEquals(e.getMessage(), "ID is duplicated");
+    public void parserTest_sameID_fail() {
+        var e = assertThrows(ParserException.class, () -> parser.parse(new File("src/test/resources/parserTest_sameID_fail.csv")));
+        assertEquals(e.getErrors().size(), 1);
+        assertEquals(e.getErrors().get(0), "ID is duplicated at 4");
     }
 
     @Test
-    public void parseTest_selfManager_fail() {
-        var e = assertThrows(ParserException.class, () -> parser.parse("parseTest_selfManager_fail.csv"));
-        assertEquals(e.getMessage(), "Employees can't be managers to themselves");
+    public void parserTest_selfManager_fail() {
+        var e = assertThrows(ParserException.class, () -> parser.parse(new File("src/test/resources/parserTest_selfManager_fail.csv")));
+        assertEquals(e.getErrors().size(), 2);
+        assertTrue(e.getErrors().contains("Employees can't be managers to themselves at 3"));
+        assertTrue(e.getErrors().contains("No existing manager's ID found for an employee at 3"));
     }
 
     @Test
-    public void parseTest_nonExistentManager_fail() {
-        var e = assertThrows(ParserException.class, () -> parser.parse("parseTest_nonExistentManager_fail.csv"));
-        assertEquals(e.getMessage(), "No existing manager's ID found for an employee");
+    public void parserTest_nonExistentManager_fail() {
+        var e = assertThrows(ParserException.class, () -> parser.parse(new File("src/test/resources/parserTest_nonExistingManager_fail.csv")));
+        assertEquals(e.getErrors().size(), 1);
+        assertEquals(e.getErrors().get(0), "No existing manager's ID found for an employee at 3");
     }
 
     @Test
-    public void parseTest_corruptHeader_fail() {
-        var e = assertThrows(ParserException.class, () -> parser.parse("parseTest_corruptHeader_fail.csv"));
-        assertEquals(e.getMessage(), "CSV header is not correct");
+    public void parserTest_corruptHeader_fail() {
+        var e = assertThrows(ParserException.class, () -> parser.parse(new File("src/test/resources/parserTest_corruptHeader_fail.csv")));
+        assertEquals(e.getErrors().size(), 1);
+        assertEquals(e.getErrors().get(0), "CSV header is not correct");
+    }
+
+    @Test
+    public void parserTest_notANumber_fail() {
+        var e = assertThrows(ParserException.class, () -> parser.parse(new File("src/test/resources/parserTest_notANumber_fail.csv")));
+        assertEquals(e.getErrors().size(), 3);
+        assertTrue(e.getErrors().contains("Manager's ID is not a number at 3"));
+        assertTrue(e.getErrors().contains("ID is not a number at 3"));
+        assertTrue(e.getErrors().contains("Salary is not a number at 3"));
+    }
+
+    @Test
+    public void parserTest_emptyFile_fail() {
+        var e = assertThrows(ParserException.class, () -> parser.parse(new File("src/test/resources/parserTest_empty_file.csv")));
+        assertEquals(e.getErrors().size(), 2);
+        assertTrue(e.getErrors().contains("File is empty"));
+        assertTrue(e.getErrors().contains("No CEO in file"));
     }
 }
