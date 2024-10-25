@@ -1,16 +1,44 @@
 package test.interview.model.report;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public record FullOrgStructReport(
-        ManagerSalaryLessReport salaryLessReport,
-        ManagerSalaryMoreReport salaryMoreReport,
-        ReportingLineReport reportingLineReport
+        List<ManagerSalaryLessReport> salaryLessReport,
+        List<ManagerSalaryMoreReport> salaryMoreReport,
+        List<ReportingLineReport> reportingLineReport
 ) {
 
     @Override
     public String toString() {
-        return "\nFull Structure Efficiency Report\n" +
-                salaryLessReport.toString() + "\n" +
-                salaryMoreReport.toString() + "\n" +
-                reportingLineReport.toString() + "\n";
+        String reportDelimiter = "\n---\n";
+        var builder = new StringBuilder();
+        if (!salaryLessReport.isEmpty()) {
+            builder.append("Managers Earn Less Than Needed:\n");
+            builder.append(salaryLessReport.stream()
+                    .map(ManagerSalaryLessReport::toString)
+                    .collect(Collectors.joining("\n")));
+            builder.append(reportDelimiter);
+        }
+        if (!salaryMoreReport.isEmpty()) {
+            builder.append("Managers Earn More Than Needed:\n");
+            builder.append(salaryMoreReport.stream()
+                    .map(ManagerSalaryMoreReport::toString)
+                    .collect(Collectors.joining("\n")));
+            builder.append(reportDelimiter);
+        }
+        if (!reportingLineReport.isEmpty()) {
+            builder.append("Reporters Line Than Needed:\n");
+            builder.append(reportingLineReport.stream()
+                    .map(ReportingLineReport::toString)
+                    .collect(Collectors.joining("\n")));
+            builder.append(reportDelimiter);
+        }
+
+        if (builder.isEmpty()) {
+            return "Everything is alright!";
+        }
+
+        return builder.toString();
     }
 }

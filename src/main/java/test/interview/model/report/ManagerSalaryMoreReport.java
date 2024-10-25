@@ -1,4 +1,19 @@
 package test.interview.model.report;
 
-public record ManagerSalaryMoreReport() {
+import test.interview.model.Employee;
+
+import java.math.BigDecimal;
+
+public record ManagerSalaryMoreReport(
+        Employee employee,
+        BigDecimal difference
+) {
+
+    @Override
+    public String toString() {
+        return employee.getId() + ", " +
+                employee.getFirstName() + " " +
+                employee.getLastName() + ", " +
+                difference;
+    }
 }
