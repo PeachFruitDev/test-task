@@ -11,7 +11,7 @@ public record ManagerSalaryMoreReport(
 
     @Override
     public String toString() {
-        return employee.getId() + ", " +
+        return "ID " + employee.getId() + ", " +
                 employee.getFirstName() + " " +
                 employee.getLastName() + ", " +
                 difference;
