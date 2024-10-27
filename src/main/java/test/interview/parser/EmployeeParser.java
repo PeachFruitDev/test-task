@@ -1,4 +1,4 @@
-package test.interview.model.parser;
+package test.interview.parser;
 
 import test.interview.model.Employee;
 
@@ -13,6 +13,13 @@ public class EmployeeParser {
 
     private final List<String> header = List.of("Id", "firstName", "lastName", "salary", "managerId");
 
+    /**
+     * Parses a CSV file with list of employees. Method throws a sufficiently informative exception with CSV issues analyzed.
+     *
+     * @param file file to be parsed
+     * @return Employee hierarchical tree
+     * @throws ParserException an exception on parsing problems with a list of issues
+     */
     public Employee parse(File file) {
         var employees = new HashMap<Integer, Employee>();
         var errors = new ArrayList<String>();

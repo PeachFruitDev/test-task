@@ -1,6 +1,6 @@
 package test.interview;
 
-import test.interview.model.parser.EmployeeParser;
+import test.interview.parser.EmployeeParser;
 import test.interview.reporter.OrgStructReporter;
 
 import java.io.File;

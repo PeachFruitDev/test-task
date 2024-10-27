@@ -1,4 +1,4 @@
-package test.interview.model.parser;
+package test.interview.parser;
 
 import java.util.List;
 

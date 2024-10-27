@@ -1,6 +1,6 @@
 import org.junit.jupiter.api.Test;
-import test.interview.model.parser.EmployeeParser;
-import test.interview.model.parser.ParserException;
+import test.interview.parser.EmployeeParser;
+import test.interview.parser.ParserException;
 
 import java.io.File;
 import java.math.BigDecimal;

@@ -19,6 +19,14 @@ public class OrgStructReporter {
     private final String salaryMaxProp = "managers.salary.max.percent";
     private final String lineMaxProp = "managers.line.max";
 
+    /**
+     * Method to create a report on an organizational structure based on relations of employees and salary.
+     *
+     * @param ceo   CEO of a company (main node in a tree hierarchy);
+     * @param props Properties to be applied to generate a report
+     * @return FullOrgStructReport Full Report with parametrized structure analysis
+     * @throws ReporterException with a clarifying message
+     */
     public FullOrgStructReport report(Employee ceo, Properties props) {
         if (ceo == null) {
             throw new ReporterException("CEO can't be null");
