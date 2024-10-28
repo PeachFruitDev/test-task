@@ -4,7 +4,7 @@ import test.interview.model.Employee;
 
 import java.math.BigDecimal;
 
-public record ManagerSalaryMoreReport(
+public record ManagerSalaryReport(
         Employee employee,
         BigDecimal difference
 ) {

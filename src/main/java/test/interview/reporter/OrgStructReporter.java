@@ -2,8 +2,7 @@ package test.interview.reporter;
 
 import test.interview.model.Employee;
 import test.interview.model.report.FullOrgStructReport;
-import test.interview.model.report.ManagerSalaryLessReport;
-import test.interview.model.report.ManagerSalaryMoreReport;
+import test.interview.model.report.ManagerSalaryReport;
 import test.interview.model.report.ReportingLineReport;
 
 import java.math.BigDecimal;
@@ -39,7 +38,7 @@ public class OrgStructReporter {
             var salaryMax = new BigDecimal(props.getProperty(salaryMaxProp));
             var lineMax = Integer.valueOf(props.getProperty(lineMaxProp));
 
-            return traverseTreeReporting(ceo, salaryMin, salaryMax, lineMax, -1);
+            return traverseTreeReporting(ceo, salaryMin, salaryMax, lineMax, 0);
         } catch (NumberFormatException e) {
             throw new ReporterException("Properties should be numeric");
         }
@@ -50,8 +49,8 @@ public class OrgStructReporter {
             throw new ReporterException("Employee can't be null");
         }
 
-        var salaryLessReport = new ArrayList<ManagerSalaryLessReport>();
-        var salaryMoreReport = new ArrayList<ManagerSalaryMoreReport>();
+        var salaryLessReport = new ArrayList<ManagerSalaryReport>();
+        var salaryMoreReport = new ArrayList<ManagerSalaryReport>();
         var reportingLineReport = new ArrayList<ReportingLineReport>();
 
         if (employee.getSubordinates() != null && !employee.getSubordinates().isEmpty()) {
@@ -77,9 +76,9 @@ public class OrgStructReporter {
             var max = avg.multiply(salaryMax);
 
             if (employee.getSalary().compareTo(min) < 0) {
-                salaryLessReport.add(new ManagerSalaryLessReport(employee, employee.getSalary().subtract(min)));
+                salaryLessReport.add(new ManagerSalaryReport(employee, employee.getSalary().subtract(min)));
             } else if (employee.getSalary().compareTo(max) > 0) {
-                salaryMoreReport.add(new ManagerSalaryMoreReport(employee, employee.getSalary().subtract(max)));
+                salaryMoreReport.add(new ManagerSalaryReport(employee, employee.getSalary().subtract(max)));
             }
 
             employee.getSubordinates().forEach(subordinate -> {
@@ -90,8 +89,8 @@ public class OrgStructReporter {
             });
         }
 
-        if (curLine > lineMax) {
-            reportingLineReport.add(new ReportingLineReport(employee, curLine - lineMax));
+        if (curLine > lineMax + 1) {
+            reportingLineReport.add(new ReportingLineReport(employee, curLine - lineMax - 1));
         }
 
         return new FullOrgStructReport(salaryLessReport, salaryMoreReport, reportingLineReport);

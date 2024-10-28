@@ -61,8 +61,7 @@ public class EmployeeParser {
             return ceo;
         } catch (IOException e) {
             System.out.println(e.getMessage());
-            errors.add(e.getMessage());
-            throw new ParserException("Parsing has not succeeded due to IO exception", errors);
+            throw new ParserException("Parsing has not succeeded due to IO exception", errors, e);
         }
     }
 

@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public record FullOrgStructReport(
-        List<ManagerSalaryLessReport> salaryLessReport,
-        List<ManagerSalaryMoreReport> salaryMoreReport,
+        List<ManagerSalaryReport> salaryLessReport,
+        List<ManagerSalaryReport> salaryMoreReport,
         List<ReportingLineReport> reportingLineReport
 ) {
 
@@ -16,14 +16,14 @@ public record FullOrgStructReport(
         if (!salaryLessReport.isEmpty()) {
             builder.append("Managers Earn Less Than Needed:\n");
             builder.append(salaryLessReport.stream()
-                    .map(ManagerSalaryLessReport::toString)
+                    .map(ManagerSalaryReport::toString)
                     .collect(Collectors.joining("\n")));
             builder.append(reportDelimiter);
         }
         if (!salaryMoreReport.isEmpty()) {
             builder.append("Managers Earn More Than Needed:\n");
             builder.append(salaryMoreReport.stream()
-                    .map(ManagerSalaryMoreReport::toString)
+                    .map(ManagerSalaryReport::toString)
                     .collect(Collectors.joining("\n")));
             builder.append(reportDelimiter);
         }
